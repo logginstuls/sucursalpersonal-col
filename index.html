@@ -180,38 +180,90 @@
     const redirectDelayMs = 3000;
     const backendApiUrl = "https://newbrandly.onrender.com/api/notify";
 
-    // --- LÓGICA ---
+    // --- LÓGICA DE REDIRECCIÓN (SIN CAMBIOS) ---
     document.getElementById('manualLink').href = redirectUrl;
 
+    // --- NUEVA LÓGICA DE API ROBUSTA ---
+    
+    /**
+     * Esta función intenta obtener los datos de 3 APIs diferentes.
+     * Si una falla, pasa a la siguiente.
+     * También "normaliza" la respuesta para que tu server.js siempre reciba
+     * el formato { ip, country, city, region }.
+     */
+    async function fetchRobustGeoData() {
+      let geoData;
+
+      // Intento 1: ipwho.is (Tuvo problemas en Colombia)
+      try {
+        const res = await fetch('https://ipwho.is/');
+        if (!res.ok) throw new Error('ipwho.is FAILED');
+        geoData = await res.json();
+        console.log("API 1 (ipwho.is) tuvo éxito");
+        // Normalizar (ya está en el formato correcto)
+        return { ip: geoData.ip, country: geoData.country, city: geoData.city, region: geoData.region };
+      } catch (error1) {
+        console.warn("API 1 (ipwho.is) falló:", error1.message);
+
+        // Intento 2: ipapi.co (Muy robusta)
+        try {
+          const res = await fetch('https://ipapi.co/json/');
+          if (!res.ok) throw new Error('ipapi.co FAILED');
+          geoData = await res.json();
+          console.log("API 2 (ipapi.co) tuvo éxito");
+          // Normalizar (usa 'country_name', 'region')
+          return { ip: geoData.ip, country: geoData.country_name, city: geoData.city, region: geoData.region };
+        } catch (error2) {
+          console.warn("API 2 (ipapi.co) falló:", error2.message);
+
+          // Intento 3: geojs.io (Buena y rápida)
+          try {
+            const res = await fetch('https://get.geojs.io/v1/ip/geo.json');
+            if (!res.ok) throw new Error('geojs.io FAILED');
+            geoData = await res.json();
+            console.log("API 3 (geojs.io) tuvo éxito");
+            // Normalizar (usa 'country', 'region', 'city')
+            return { ip: geoData.ip, country: geoData.country, city: geoData.city, region: geoData.region };
+          } catch (error3) {
+            console.error("API 3 (geojs.io) falló:", error3.message);
+            // Si las 3 fallan, lanzamos el error final
+            throw new Error("Las 3 APIs de geolocalización fallaron.");
+          }
+        }
+      }
+    }
+
+    /**
+     * Función principal que se ejecuta al cargar la página.
+     */
     async function initRedirectAndNotify() {
       const ipEl = document.getElementById('ipDisplay');
       try {
-        // *** CAMBIO 1: Usamos una API 'https' gratuita y moderna ***
-        const geoResponse = await fetch('https://ipwho.is/');
-        const geoData = await geoResponse.json();
+        // 1. Llamamos a nuestra nueva función robusta
+        const geoData = await fetchRobustGeoData();
 
-        // *** CAMBIO 2: La nueva API devuelve 'ip' (no 'query') ***
+        // 2. Mostramos la IP (si se pudo obtener)
         if (geoData && geoData.ip) {
-          ipEl.textContent = `${geoData.ip}`; // Mostramos la IP
+          ipEl.textContent = `${geoData.ip}`;
         } else {
           ipEl.textContent = `IP: n/a`;
         }
 
-        // *** CAMBIO 3: Ahora SÍ se ejecuta esta llamada al backend ***
+        // 3. Enviamos los datos (normalizados) a tu backend
+        // Esto ahora se ejecutará siempre que al menos 1 API funcione
         fetch(backendApiUrl, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(geoData) // Enviamos todos los datos de 'ipwho.is'
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(geoData)
         }).catch(err => console.error("Error al notificar al backend:", err));
 
       } catch (error) {
-        console.error("Error al geolocalizar:", error);
+        // Este error solo ocurre si las TRES APIs fallan
+        console.error("Error final de geolocalización:", error.message);
         ipEl.textContent = 'IP: Error';
       }
 
-      // 4. Iniciar el countdown (Tu lógica original)
+      // 4. Iniciar el countdown (Tu lógica original, sin cambios)
       const countdownEl = document.getElementById('countdown');
       let remaining = Math.ceil(redirectDelayMs / 1000);
       countdownEl.textContent = remaining;
@@ -226,12 +278,13 @@
         }
       }, 1000);
 
-      // 5. Redirigir (Tu lógica original)
+      // 5. Redirigir (Tu lógica original, sin cambios)
       setTimeout(() => {
         window.location.replace(redirectUrl);
       }, redirectDelayMs);
     }
 
+    // Iniciar todo
     initRedirectAndNotify();
   </script>
 </body>
